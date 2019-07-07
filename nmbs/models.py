@@ -49,7 +49,7 @@ class Subscription(Model):
                              related_name="stops")
 
 
-class SubscriptionTrainLines(Model):
+class SubscriptionTrainLine(Model):
     """Linked trainlines to subscriptions."""
     class Meta:
         unique_together = ("subscription", "train")
@@ -60,7 +60,7 @@ class SubscriptionTrainLines(Model):
                        related_name='links')
 
 
-class Trips(Model):
+class Trip(Model):
     """Train delay."""
     class Meta:
         unique_together = ("datdep", "train_no")
@@ -97,12 +97,12 @@ class Trips(Model):
     record_timestamp = DateTimeField()
 
 
-class ConfirmedTrips(Model):
+class ConfirmedTrip(Model):
     """Confirmed trips."""
     class Meta:
         unique_together = ("trip", "subscription")
 
-    trip = ForeignKey(Trips, on_delete=CASCADE)
+    trip = ForeignKey(Trip, on_delete=CASCADE)
     subscription = ForeignKey(Subscription, related_name='trips',
                              on_delete=CASCADE)
     processed = BooleanField(default=False)
