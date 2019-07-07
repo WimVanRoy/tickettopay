@@ -1,7 +1,7 @@
 from django.db.models import Model, ForeignKey, CharField, FloatField, \
-        DateField, DateTimeField, TimeField, BooleanField
+        DateField, DateTimeField, TimeField, BooleanField, SET_NULL, CASCADE
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext_laxy as _
+from django.utils.translation import ugettext_lazy as _
 
 TYPE_TICKET = 'ticket'
 TYPE_TRAINCARD = 'traincard'
@@ -23,14 +23,13 @@ TYPES_OPTIONS = (
 
 class TrainLine(Model):
     """Train line."""
-    train_no = CharField(max_length=10)
+    train_no = CharField(max_length=10, unique=True)
     train_serv = CharField(max_length=10)
-
 
 
 class Station(Model):
     """Train station."""
-    name = CharField(max_length=128)
+    name = CharField(max_length=128, unique=True)
 
 
 class Subscription(Model):
@@ -42,24 +41,33 @@ class Subscription(Model):
     ticket_number = CharField(max_length=128)
     ticket_last_usage = DateField()
 
-    departure_station = ForeignKey(Stations, on_delete=SET_NULL)
-    destination_station = ForeignKey(Stations, on_delete=SET_NULL)
-    stop_station = ForeignKey(Stations, on_delete=SET_NULL)
+    departure_station = ForeignKey(Station, null=True, on_delete=SET_NULL,
+                                  related_name="departures")
+    destination_station = ForeignKey(Station, null=True, on_delete=SET_NULL,
+                                    related_name="destinations")
+    stop_station = ForeignKey(Station, null=True, on_delete=SET_NULL,
+                             related_name="stops")
 
 
 class SubscriptionTrainLines(Model):
     """Linked trainlines to subscriptions."""
-    subscription = ForeignKey(Subscription, on_delete=models.CASCADE,
+    class Meta:
+        unique_together = ("subscription", "train")
+
+    subscription = ForeignKey(Subscription, on_delete=CASCADE,
                               related_name='lines')
-    train = ForeignKey(TrainLine, on_delete=models.CASCADE,
+    train = ForeignKey(TrainLine, on_delete=CASCADE,
                        related_name='links')
 
 
 class Trips(Model):
     """Train delay."""
+    class Meta:
+        unique_together = ("datdep", "train_no")
+
     datdep = DateField()
     recordid = CharField(max_length=64)
-    train_no = ForeignKey(TrainLine, related_name='trips')
+    train_no = ForeignKey(TrainLine, related_name='trips', on_delete=CASCADE)
 
     line_no_arr = CharField(max_length=64)
     line_no_dep = CharField(max_length=64)
@@ -69,7 +77,7 @@ class Trips(Model):
     planned_date_dep = DateTimeField()
     planned_time_dep = TimeField()
 
-    ptcar_lg_nm_nl = ForeignKey(Station)
+    ptcar_lg_nm_nl = ForeignKey(Station, on_delete=CASCADE)
     real_date_arr = DateField()
     real_date_dep = DateField()
     real_time_arr = TimeField()
@@ -91,6 +99,10 @@ class Trips(Model):
 
 class ConfirmedTrips(Model):
     """Confirmed trips."""
-    trip = ForeignKey(Trips)
-    subscription = ForeignKey(Subscription, related_name='trips')
+    class Meta:
+        unique_together = ("trip", "subscription")
+
+    trip = ForeignKey(Trips, on_delete=CASCADE)
+    subscription = ForeignKey(Subscription, related_name='trips',
+                             on_delete=CASCADE)
     processed = BooleanField(default=False)
