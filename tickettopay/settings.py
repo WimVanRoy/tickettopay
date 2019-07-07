@@ -40,6 +40,7 @@ LOGOUT_REDIRECT_URL = '/'
 # Application definition
 
 INSTALLED_APPS = [
+    "core",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -116,8 +117,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+#############################################################
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
+#############################################################
 
 LANGUAGE_CODE = 'en-us'
 
@@ -130,7 +133,27 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.1/howto/static-files/
+#############################################################
+# STATIC AND MEDIA SETTINGS                                 #
+# https://docs.djangoproject.com/en/2.1/howto/static-files/ #
+#############################################################
+
+FILEBROWSER_DIRECTORY = os.path.join(BASE_DIR, 'core/media')
+
+# if DEVELOPPING is False:
+#     MEDIA_ROOT = os.path.join(BASE_DIR, '../www/media')
+#     # media root on server ((root/)www/media), storing it in core/media doesn't
+#     # work in production because of safety reasons
+# else:
+#     MEDIA_ROOT = './core/media'
+#     # mroot in development
+MEDIA_ROOT = './tmp/media/'
+
+MEDIA_URL = '/media/'
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = './tmp/static/'
+
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+

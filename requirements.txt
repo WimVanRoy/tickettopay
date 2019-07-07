@@ -1,0 +1,10 @@
+decorator==4.3.0
+Django==2.1.1
+django-dynamic-scraper==0.13.1
+django-sslserver==0.20
+future==0.15.2
+jsonpath-rw==1.4.0
+Pillow==3.4.2
+ply==3.11
+pytz==2018.5
+six==1.11.0

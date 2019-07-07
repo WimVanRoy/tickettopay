@@ -1,1 +1,10 @@
+# Django related files
 db.sqlite3
+tmp/
+
+# Python related
+*.pyc
+__pycache__
+
+# Swap
+*.swp
