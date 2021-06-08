@@ -4,7 +4,7 @@ Django==2.2.20
 django-sslserver==0.20
 future==0.17.1
 jsonpath-rw==1.4.0
-Pillow==8.1.1
+Pillow==8.2.0
 ply==3.11
 pytz==2019.1
 six==1.12.0
